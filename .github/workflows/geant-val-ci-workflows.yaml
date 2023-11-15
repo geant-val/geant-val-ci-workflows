@@ -1,6 +1,12 @@
 name: configure-build-run
 on: 
   workflow_dispatch:
+    inputs:
+      repository:
+        description: 'The repository to checkout'
+        required: false
+        type: string
+        default: ${{ github.repository }}
   workflow_call:
     inputs:
       repository:
