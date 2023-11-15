@@ -4,13 +4,13 @@ on:
     inputs:
       repository:
         description: 'The repository to checkout'
-        required: true
+        required: false
         type: string
   workflow_call:
     inputs:
       repository:
         description: 'The repository to checkout'
-        required: true
+        required: false
         type: string
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          repository: ${{ github.repository }}
+          repository: ${{ inputs.repository || github.repository }}
       - uses: cvmfs-contrib/github-action-cvmfs@v3
       - name: Start container
         run: |
