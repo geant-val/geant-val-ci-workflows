@@ -4,9 +4,8 @@ on:
     inputs:
       repository:
         description: 'The repository to checkout'
-        required: false
+        required: true
         type: string
-        default: ${{ github.repository }}
   workflow_call:
     inputs:
       repository:
