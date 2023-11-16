@@ -18,7 +18,7 @@ jobs:
   prepare-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: ${{ steps.set-matrix.outputs.matrix_json }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -48,9 +48,9 @@ jobs:
           echo "Matrix JSON: $MATRIX_JSON"
 
           # Set the output for GitHub Actions
-          echo "MATRIX_JSON<<EOF" >> $GITHUB_ENV
-          echo "$MATRIX_JSON" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          echo "matrix_json<<EOF" >> $GITHUB_OUTPUT
+          echo "$MATRIX_JSON" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
   build-and-test:
     needs: prepare-matrix
@@ -77,7 +77,7 @@ jobs:
       - uses: cvmfs-contrib/github-action-cvmfs@v3
       - name: Use Matrix JSON
         run: |
-          echo "Matrix JSON: ${{ env.MATRIX_JSON }}"
+          echo "Matrix JSON: ${{needs.prepare-matrix.outputs.matrix}}
       - name: Start container
         run: |
           CONTAINER_NAME=my-container-${{ github.run_id }}-${{ github.run_number }}
