@@ -58,17 +58,18 @@ jobs:
     
     strategy:
       fail-fast: false  # This prevents other jobs from being canceled if one fails
-      matrix:
-        include:
-          - geant4_version: "11.1.p02"
-            platform: "centos7" 
-            gcc_version: "10" 
-          - geant4_version: "10.7.p03"
-            platform: "centos7"
-            gcc_version: "10"
-          - geant4_version: "11.1.ref10"
-            platform: "centos8"
-            gcc_version: "10"
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+#      matrix:
+#        include:
+#          - geant4_version: "11.1.p02"
+#            platform: "centos7" 
+#            gcc_version: "10" 
+#          - geant4_version: "10.7.p03"
+#            platform: "centos7"
+#            gcc_version: "10"
+#          - geant4_version: "11.1.ref10"
+#            platform: "centos8"
+#            gcc_version: "10"
        
     steps:
       - uses: actions/checkout@v4.1.1
