@@ -48,9 +48,12 @@ jobs:
           echo "Matrix JSON: $MATRIX_JSON"
 
           # Set the output for GitHub Actions
-          echo "::set-output name=matrix::${MATRIX_JSON}"
+          echo "MATRIX_JSON<<EOF" >> $GITHUB_ENV
+          echo "$MATRIX_JSON" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
   build-and-test:
+    needs: prepare-matrix
     runs-on: ubuntu-latest
     
     strategy:
@@ -72,6 +75,9 @@ jobs:
         with:
           repository: ${{ inputs.repository || github.repository }}
       - uses: cvmfs-contrib/github-action-cvmfs@v3
+      - name: Use Matrix JSON
+        run: |
+          echo "Matrix JSON: $MATRIX_JSON"
       - name: Start container
         run: |
           CONTAINER_NAME=my-container-${{ github.run_id }}-${{ github.run_number }}
