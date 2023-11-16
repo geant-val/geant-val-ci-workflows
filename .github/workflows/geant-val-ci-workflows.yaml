@@ -18,7 +18,7 @@ jobs:
   prepare-matrix:
     runs-on: ubuntu-latest
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix_json }}
+      matrix_json: ${{ steps.set-matrix.outputs.matrix_json }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -58,7 +58,7 @@ jobs:
     
     strategy:
       fail-fast: false  # This prevents other jobs from being canceled if one fails
-      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix)}}
+      matrix: ${{fromJson(needs.prepare-matrix.outputs.matrix_json)}}
 #      matrix:
 #        include:
 #          - geant4_version: "11.1.p02"
@@ -78,7 +78,7 @@ jobs:
       - uses: cvmfs-contrib/github-action-cvmfs@v3
       - name: Use Matrix JSON
         run: |
-          echo "${{needs.prepare-matrix.outputs.matrix}}"
+          echo "${{needs.prepare-matrix.outputs.matrix_json}}"
       - name: Start container
         run: |
           CONTAINER_NAME=my-container-${{ github.run_id }}-${{ github.run_number }}
