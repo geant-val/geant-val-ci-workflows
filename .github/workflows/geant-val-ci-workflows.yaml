@@ -36,12 +36,14 @@ jobs:
 
           # Convert array to JSON string
           # MATRIX_JSON="["
+          MATRIX_JSON="{\"include\":["
           for i in "${!MATRIX[@]}"; do
             MATRIX_JSON+="${MATRIX[$i]}"
             if [ $((i+1)) -lt ${#MATRIX[@]} ]; then
               MATRIX_JSON+=","
             fi
           done
+          MATRIX_JSON+="]}"
           #MATRIX_JSON+="]"
 
           # Print the matrix
