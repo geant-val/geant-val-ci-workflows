@@ -77,7 +77,7 @@ jobs:
       - uses: cvmfs-contrib/github-action-cvmfs@v3
       - name: Use Matrix JSON
         run: |
-          echo "Matrix JSON: ${{needs.prepare-matrix.outputs.matrix}}
+          echo "${{needs.prepare-matrix.outputs.matrix}}"
       - name: Start container
         run: |
           CONTAINER_NAME=my-container-${{ github.run_id }}-${{ github.run_number }}
