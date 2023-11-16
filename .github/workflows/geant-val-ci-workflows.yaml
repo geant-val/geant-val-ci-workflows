@@ -31,9 +31,9 @@ jobs:
 
           # Check for CMakeLists.txt in the current directory
           if [[ -f "CMakeLists.txt" ]]; then
-            MATRIX+=("{\"project_dir\":\".\", \"geant4_version\":\"11.1.p02\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
-            MATRIX+=("{\"project_dir\":\".\", \"geant4_version\":\"10.7.p03\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
-            MATRIX+=("{\"project_dir\":\".\", \"geant4_version\":\"11.1.ref10\", \"platform\":\"centos8\", \"gcc_version\":\"10\"}")
+            MATRIX+=("{\"project_dir\":\"\", \"geant4_version\":\"11.1.p02\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
+            MATRIX+=("{\"project_dir\":\"\", \"geant4_version\":\"10.7.p03\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
+            MATRIX+=("{\"project_dir\":\"\", \"geant4_version\":\"11.1.ref10\", \"platform\":\"centos8\", \"gcc_version\":\"10\"}")
           fi
 
           for DIR in $PROJECT_DIRS; do
