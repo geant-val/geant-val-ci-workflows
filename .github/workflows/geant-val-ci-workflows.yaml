@@ -109,7 +109,7 @@ jobs:
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           mkdir -p build logs install && cd build && cmake -DCMAKE_INSTALL_PREFIX=../install ../${{matrix.project_dir}}/ 2>&1 | \
-          tee /workspace/logs/stderr-configure-${{ matrix.geant4_version }}.log"
+          tee /workspace/logs/${{matrix.project_dir}}-stderr-configure-${{ matrix.geant4_version }}.log"
       - name: Connect to container and build G4 app
         run: |
           docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
@@ -117,12 +117,12 @@ jobs:
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           cd build && make install 2>&1 | \
-          tee /workspace/logs/stderr-build-${{ matrix.geant4_version }}.log"      
+          tee /workspace/logs/${{matrix.project_dir}}-stderr-build-${{ matrix.geant4_version }}.log"      
       - name: Upload failure log
         if: failure()
         uses: actions/upload-artifact@v3
         with:
-          name: logfiles-${{ matrix.geant4_version }}.log
+          name: ${{matrix.project_dir}}-logfiles-${{ matrix.geant4_version }}.log
           path: logs/*.log
 
 
