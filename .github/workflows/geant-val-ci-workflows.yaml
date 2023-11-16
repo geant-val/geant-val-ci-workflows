@@ -88,6 +88,7 @@ jobs:
       - uses: actions/checkout@v4.1.1
         with:
           repository: ${{ inputs.repository || github.repository }}
+          submodules: 'recursive'
       - uses: cvmfs-contrib/github-action-cvmfs@v3
       - name: Use Matrix JSON
         run: |
@@ -107,7 +108,7 @@ jobs:
           export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
-          mkdir -p build logs install && cd build && ls -lrt . && ls -lrt ../${{matrix.project_dir}} && cmake -DCMAKE_INSTALL_PREFIX=../install ../${{matrix.project_dir}}/ 2>&1 | \
+          mkdir -p build logs install && cd build && cmake -DCMAKE_INSTALL_PREFIX=../install ../${{matrix.project_dir}}/ 2>&1 | \
           tee /workspace/logs/stderr-configure-${{ matrix.geant4_version }}.log"
       - name: Connect to container and build G4 app
         run: |
