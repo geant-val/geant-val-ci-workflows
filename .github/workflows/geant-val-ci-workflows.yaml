@@ -28,10 +28,20 @@ jobs:
           PROJECT_DIRS=$(ls -d */ | sed 's/\///g')  # Assuming each directory is a project
           MATRIX=()
 
+          # Check for CMakeLists.txt in the current directory
+          if [[ -f "CMakeLists.txt" ]]; then
+            MATRIX+=("{\"project_dir\":\".\", \"geant4_version\":\"11.1.p02\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
+            MATRIX+=("{\"project_dir\":\".\", \"geant4_version\":\"10.7.p03\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
+            MATRIX+=("{\"project_dir\":\".\", \"geant4_version\":\"11.1.ref10\", \"platform\":\"centos8\", \"gcc_version\":\"10\"}")
+          fi
+
           for DIR in $PROJECT_DIRS; do
-            MATRIX+=("{\"project_dir\":\"$DIR\", \"geant4_version\":\"11.1.p02\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
-            MATRIX+=("{\"project_dir\":\"$DIR\", \"geant4_version\":\"10.7.p03\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
-            MATRIX+=("{\"project_dir\":\"$DIR\", \"geant4_version\":\"11.1.ref10\", \"platform\":\"centos8\", \"gcc_version\":\"10\"}")
+            # Check for CMakeLists.txt in the directory
+            if [[ -f "$DIR/CMakeLists.txt" ]] || [[ -n $(find "$DIR" -maxdepth 1 -type f -name "CMakeLists.txt") ]]; then
+              MATRIX+=("{\"project_dir\":\"$DIR\", \"geant4_version\":\"11.1.p02\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
+              MATRIX+=("{\"project_dir\":\"$DIR\", \"geant4_version\":\"10.7.p03\", \"platform\":\"centos7\", \"gcc_version\":\"10\"}")
+              MATRIX+=("{\"project_dir\":\"$DIR\", \"geant4_version\":\"11.1.ref10\", \"platform\":\"centos8\", \"gcc_version\":\"10\"}")
+            fi
           done
 
           # Convert array to JSON string
