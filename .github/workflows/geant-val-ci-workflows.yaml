@@ -125,7 +125,14 @@ jobs:
           name: ${{matrix.project_dir}}-logfiles-${{ matrix.geant4_version }}.log
           path: logs/*.log
 
-
+  collect-results:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+         
+    steps: 
+       - name: "Collect artifacts"
+         run: |
+            echo "Collect artifacts"
 
 
     
