@@ -130,10 +130,13 @@ jobs:
     runs-on: ubuntu-latest
          
     steps: 
-       - name: "Collect artifacts"
-         if: always()
-         run: |
-            echo "Collect artifacts"
+      - uses: actions/download-artifact@v3
+      - name: "Collect artifacts"
+        if: always()
+        run: |
+          echo "Collect artifacts"
+      - name: Display structure of downloaded files
+        run: ls -R
 
 
     
