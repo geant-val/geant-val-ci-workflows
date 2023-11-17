@@ -131,6 +131,7 @@ jobs:
          
     steps: 
        - name: "Collect artifacts"
+         if: always()
          run: |
             echo "Collect artifacts"
 
