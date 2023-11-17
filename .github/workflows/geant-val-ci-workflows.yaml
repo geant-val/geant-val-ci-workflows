@@ -126,13 +126,13 @@ jobs:
           path: logs/*.log
 
   collect-results:
+    if: always()
     needs: build-and-test
     runs-on: ubuntu-latest
          
     steps: 
       - uses: actions/download-artifact@v3
       - name: "Collect artifacts"
-        if: always()
         run: |
           echo "Collect artifacts"
       - name: Display structure of downloaded files
