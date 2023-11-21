@@ -178,12 +178,13 @@ jobs:
           ls -la  
           echo "tests:" > results_ci.yaml
           cat *-results.yaml/*results*.yaml >> results_ci.yaml
+          python3 run-yaml.py > results.MD
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add results_ci.yaml
-          git commit -m "Add new CI results in YAML format" results_ci.yaml
+          git add results_ci.yaml results.MD
+          git commit -m "Add new CI results in YAML format and MD file" results_ci.yaml results.MD
           git push  
-          python3 run-yaml.py
+          
 #      - uses: EndBug/add-and-commit@v9
 #        with:
 #          message: 'Add the very useful text file'
