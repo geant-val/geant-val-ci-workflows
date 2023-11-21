@@ -139,7 +139,7 @@ jobs:
       - name: Generate YAML file
         if: always()
         run: |
-          echo "tests:" > results.yaml
+          echo "tests:" > ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
           echo "  - name: \"${{ matrix.project_dir }}" >> results.yaml
           echo "    geant4_versions:" >> results.yaml
           echo "      - version: \"${{ matrix.geant4_version }}\"" >> results.yaml
@@ -156,8 +156,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: results.yaml
-          path: results.yaml    
+          name: ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
+          path: ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml    
 
   collect-results:
     if: always() && inputs.commit_back
@@ -176,7 +176,7 @@ jobs:
       - run: |   
           pwd
           ls -la  
-          cat results.yaml/results*.yaml > generated.txt
+          cat *results.yaml/results*.yaml > generated.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add generated.txt
