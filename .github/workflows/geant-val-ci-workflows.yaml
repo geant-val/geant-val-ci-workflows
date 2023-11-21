@@ -137,6 +137,10 @@ jobs:
           echo "Collect artifacts"
       - name: Display structure of downloaded files
         run: ls -R
+      - uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Add the very useful text file'
+          add: 'TestEm3-logfiles-10.7.p03.log/TestEm3-stderr-build-10.7.p03.log --force'
 
 
     
