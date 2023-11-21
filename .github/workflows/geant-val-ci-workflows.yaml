@@ -139,7 +139,7 @@ jobs:
       - name: Generate YAML file
         if: always()
         run: |
-          echo "  - name: \"${{ matrix.project_dir }}" >> results.yaml
+          echo "  - name: \"${{ matrix.project_dir }}\"" >> results.yaml
           echo "    geant4_versions:" >> results.yaml
           echo "      - version: \"${{ matrix.geant4_version }}\"" >> results.yaml
           echo "        compilers:" >> results.yaml
