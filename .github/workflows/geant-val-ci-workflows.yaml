@@ -6,12 +6,22 @@ on:
         description: 'The repository to checkout'
         required: false
         type: string
+      commit_back:
+        type: boolean
+        description: 'Commit README and summary file back to repo (needed by dashboard repo)'
+        required: false
+        default: false
   workflow_call:
     inputs:
       repository:
         description: 'The repository to checkout'
         required: false
         type: string
+      commit_back:
+        type: boolean
+        description: 'Commit README and summary file back to repo (needed by dashboard repo)'
+        required: false
+        default: false
 
 jobs:
 
@@ -126,7 +136,7 @@ jobs:
           path: logs/*.log
 
   collect-results:
-    if: always()
+    if: always() && env.commit_back == 'true'
     needs: build-and-test
     runs-on: ubuntu-latest
          
