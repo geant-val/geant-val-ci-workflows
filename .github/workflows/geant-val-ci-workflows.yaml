@@ -151,6 +151,20 @@ jobs:
         with:
           name: build-results
           path: result.txt
+      - name: Generate YAML file
+        run: |
+          echo "tests:" > results.yaml
+          echo "  - name: Test1" >> results.yaml
+          echo "    geant4_versions:" >> results.yaml
+          echo "      - version: \"${{ matrix.geant4_version }}\"" >> results.yaml
+          echo "        compilers:" >> results.yaml
+          echo "          - compiler_version: \"${{ matrix.gcc_version }}\"" >> results.yaml
+          echo "            results:" >> results.yaml
+          echo "              configure: \"${{ steps.configure-app.outcome }}\"" >> results.yaml
+          echo "              build: \"${{ steps.build-app.outcome }}\"" >> results.yaml
+      - name: Check content of YAML file
+        run: |
+          cat results.yaml
 
   collect-results:
     if: always() && inputs.commit_back
