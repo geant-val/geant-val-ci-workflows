@@ -138,6 +138,8 @@ jobs:
       - name: Display structure of downloaded files
         run: ls -R
       - uses: actions/checkout@v4
+        with:
+          token:  ${{ secrets.GITHUB_TOKEN }}
       - run: |
           date > generated.txt
           git config user.name github-actions
