@@ -152,9 +152,10 @@ jobs:
           name: build-results
           path: result.txt
       - name: Generate YAML file
+        if: always()
         run: |
           echo "tests:" > results.yaml
-          echo "  - name: Test1" >> results.yaml
+          echo "  - name: \"${{ matrix.project_dir }}" >> results.yaml
           echo "    geant4_versions:" >> results.yaml
           echo "      - version: \"${{ matrix.geant4_version }}\"" >> results.yaml
           echo "        compilers:" >> results.yaml
@@ -163,6 +164,7 @@ jobs:
           echo "              configure: \"${{ steps.configure-app.outcome }}\"" >> results.yaml
           echo "              build: \"${{ steps.build-app.outcome }}\"" >> results.yaml
       - name: Check content of YAML file
+        if: always()
         run: |
           cat results.yaml
 
