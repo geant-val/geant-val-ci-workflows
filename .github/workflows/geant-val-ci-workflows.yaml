@@ -136,7 +136,7 @@ jobs:
           path: logs/*.log
 
   collect-results:
-    if: always() && env.commit_back == 'true'
+    if: always() && ${{ github.event.inputs.commit_back == 'true' }}
     needs: build-and-test
     runs-on: ubuntu-latest
          
