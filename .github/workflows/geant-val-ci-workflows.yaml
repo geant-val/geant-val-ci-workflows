@@ -113,6 +113,7 @@ jobs:
             ghcr.io/aidasoft/${{ matrix.platform }}:latest /bin/bash
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
       - name: Connect to container and configure G4 app
+        id: configure-app
         run: |
           docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
           export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
@@ -121,6 +122,7 @@ jobs:
           mkdir -p build logs install && cd build && cmake -DCMAKE_INSTALL_PREFIX=../install ../${{matrix.project_dir}}/ 2>&1 | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-configure-${{ matrix.geant4_version }}.log"
       - name: Connect to container and build G4 app
+        id: build-app
         run: |
           docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
           export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
