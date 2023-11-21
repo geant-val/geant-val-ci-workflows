@@ -139,7 +139,6 @@ jobs:
       - name: Generate YAML file
         if: always()
         run: |
-          echo "tests:" > ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
           echo "  - name: \"${{ matrix.project_dir }}" >> results.yaml
           echo "    geant4_versions:" >> results.yaml
           echo "      - version: \"${{ matrix.geant4_version }}\"" >> results.yaml
@@ -148,6 +147,7 @@ jobs:
           echo "            results:" >> results.yaml
           echo "              configure: \"${{ steps.configure-app.outcome }}\"" >> results.yaml
           echo "              build: \"${{ steps.build-app.outcome }}\"" >> results.yaml
+          cp results.yaml ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
       - name: Check content of YAML file
         if: always()
         run: |
@@ -176,7 +176,8 @@ jobs:
       - run: |   
           pwd
           ls -la  
-          cat *-results.yaml/*results*.yaml > results_ci.yaml
+          echo "tests:" > results_ci.yaml
+          cat *-results.yaml/*results*.yaml >> results_ci.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add results_ci.yaml
