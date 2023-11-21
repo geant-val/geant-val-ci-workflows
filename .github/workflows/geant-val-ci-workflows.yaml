@@ -121,10 +121,6 @@ jobs:
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           mkdir -p build logs install && cd build && cmake -DCMAKE_INSTALL_PREFIX=../install ../${{matrix.project_dir}}/ 2>&1 | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-configure-${{ matrix.geant4_version }}.log"
-      - name: Record configure result
-        if: always()
-        run: | 
-          echo "Configure G4 app: ${{ steps.configure-app.outcome }}" >> result.txt
       - name: Connect to container and build G4 app
         id: build-app
         run: |
@@ -133,24 +129,13 @@ jobs:
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           cd build && make install 2>&1 | \
-          tee /workspace/logs/${{matrix.project_dir}}-stderr-build-${{ matrix.geant4_version }}.log"
-      - name: Record build result
-        if: always()
-        run: |
-          echo "Build G4 app: ${{ steps.build-app.outcome }}" >> result.txt    
+          tee /workspace/logs/${{matrix.project_dir}}-stderr-build-${{ matrix.geant4_version }}.log"    
       - name: Upload failure log
         if: failure()
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.project_dir}}-logfiles-${{ matrix.geant4_version }}.log
           path: logs/*.log
-
-      - name: Upload result file
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-results
-          path: result.txt
       - name: Generate YAML file
         if: always()
         run: |
@@ -167,6 +152,12 @@ jobs:
         if: always()
         run: |
           cat results.yaml
+      - name: Upload result file
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: results.yaml
+          path: results.yaml    
 
   collect-results:
     if: always() && inputs.commit_back
@@ -184,7 +175,7 @@ jobs:
         with:
           token:  ${{ secrets.GITHUB_TOKEN }}
       - run: |
-          date > generated.txt
+          cat *.yaml > generated.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
