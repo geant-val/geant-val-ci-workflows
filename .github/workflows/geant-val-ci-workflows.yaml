@@ -131,17 +131,24 @@ jobs:
     runs-on: ubuntu-latest
          
     steps: 
-      - uses: actions/checkout@v4.1.1
       - uses: actions/download-artifact@v3
       - name: "Collect artifacts"
         run: |
           echo "Collect artifacts"
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: EndBug/add-and-commit@v9
-        with:
-          message: 'Add the very useful text file'
-          add: 'TestEm3-logfiles-10.7.p03.log/TestEm3-stderr-build-10.7.p03.log --force'
+      - uses: actions/checkout@v4
+      - run: |
+          date > generated.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "generated"
+          git push  
+#      - uses: EndBug/add-and-commit@v9
+#        with:
+#          message: 'Add the very useful text file'
+#          add: 'TestEm3-logfiles-10.7.p03.log/TestEm3-stderr-build-10.7.p03.log --force'
 
 
     
