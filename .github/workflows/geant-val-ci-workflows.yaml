@@ -171,10 +171,13 @@ jobs:
           echo "Collect artifacts"
       - name: Display structure of downloaded files
         run: ls -R
+      - name: Display Current Directory
+        run: pwd
       - uses: actions/checkout@v4
         with:
           token:  ${{ secrets.GITHUB_TOKEN }}
-      - run: |
+      - run: |   
+          ls -la  
           cat *.yaml > generated.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
