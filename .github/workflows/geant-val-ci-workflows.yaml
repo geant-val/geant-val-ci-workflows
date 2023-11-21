@@ -165,25 +165,22 @@ jobs:
     runs-on: ubuntu-latest
          
     steps: 
+      - uses: actions/checkout@v4
+        with:
+          token:  ${{ secrets.GITHUB_TOKEN }}    
       - uses: actions/download-artifact@v3
-      - name: "Collect artifacts"
-        run: |
-          echo "Collect artifacts"
       - name: Display structure of downloaded files
         run: ls -R
       - name: Display Current Directory
         run: pwd
-      - uses: actions/checkout@v4
-        with:
-          token:  ${{ secrets.GITHUB_TOKEN }}
       - run: |   
           pwd
           ls -la  
           cat *.yaml > generated.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add .
-          git commit -m "generated"
+          git add generated.txt
+          git commit -m "generated" generated.txt
           git push  
 #      - uses: EndBug/add-and-commit@v9
 #        with:
