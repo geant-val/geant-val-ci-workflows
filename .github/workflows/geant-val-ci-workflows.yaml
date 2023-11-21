@@ -183,6 +183,7 @@ jobs:
           git add results_ci.yaml
           git commit -m "Add new CI results in YAML format" results_ci.yaml
           git push  
+          python3 run-yaml.py
 #      - uses: EndBug/add-and-commit@v9
 #        with:
 #          message: 'Add the very useful text file'
