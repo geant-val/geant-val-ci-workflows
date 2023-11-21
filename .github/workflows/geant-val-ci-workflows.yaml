@@ -177,6 +177,7 @@ jobs:
         with:
           token:  ${{ secrets.GITHUB_TOKEN }}
       - run: |   
+          pwd
           ls -la  
           cat *.yaml > generated.txt
           git config user.name github-actions
