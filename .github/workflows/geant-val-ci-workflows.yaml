@@ -140,7 +140,7 @@ jobs:
           executable=\$(find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./||'); \
           echo \${executable} | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-run-${{ matrix.geant4_version }}.log"  
-          executable=$(docker exec $CONTAINER_NAME /bin/bash -c "find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./||');" >> $GITHUB_ENV
+          executable=$(docker exec $CONTAINER_NAME /bin/bash -c "find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./||'") 
           echo "executable=${executable}" >> $GITHUB_ENV
       - name: Upload failure log
         if: failure()
