@@ -138,7 +138,8 @@ jobs:
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           cd build && \
           executable=\$(find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./||'); \
-          echo \${executable} | \
+          echo \${executable} &&
+          echo "executable=\${executable}" >> $GITHUB_ENV | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-run-${{ matrix.geant4_version }}.log"  
       - name: Upload failure log
         if: failure()
@@ -157,6 +158,7 @@ jobs:
           echo "            results:" >> results.yaml
           echo "              configure: \"${{ steps.configure-app.outcome }}\"" >> results.yaml
           echo "              build: \"${{ steps.build-app.outcome }}\"" >> results.yaml
+          echo "              executable: \"${executable}\"" >> results.yaml
           cp results.yaml ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
       - name: Check content of YAML file
         if: always()
