@@ -138,7 +138,7 @@ jobs:
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           cd build | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-run-${{ matrix.geant4_version }}.log
-          executable=`find -max-depth=1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'`
+          executable=`find -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'`
           echo ${executable}"      
       - name: Upload failure log
         if: failure()
