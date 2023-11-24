@@ -143,7 +143,7 @@ jobs:
           echo "executable=${executable}"
       - name: Find and set executable
         run: |
-          executable=$(docker exec $CONTAINER_NAME /bin/bash -c "find build -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./build/||'")
+          executable=$(docker exec $CONTAINER_NAME /bin/bash -c "find build -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^build/||'")
           echo "executable=${executable}" >> $GITHUB_ENV
       - name: Upload failure log
         if: failure()
