@@ -136,7 +136,9 @@ jobs:
           export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
-          cd build | \
+          cd build && \
+          executable=\$(find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1); \
+          echo \${executable} | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-run-${{ matrix.geant4_version }}.log;
           executable=`find -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary'`;
           echo ${executable}"      
