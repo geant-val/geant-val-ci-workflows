@@ -129,7 +129,15 @@ jobs:
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
           cd build && make install 2>&1 | \
-          tee /workspace/logs/${{matrix.project_dir}}-stderr-build-${{ matrix.geant4_version }}.log"    
+          tee /workspace/logs/${{matrix.project_dir}}-stderr-build-${{ matrix.geant4_version }}.log"   
+      - name: Run quick app tests.
+        run: |
+          docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
+          export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
+          source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
+          source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
+          cd build | \
+          tee /workspace/logs/${{matrix.project_dir}}-stderr-run-${{ matrix.geant4_version }}.log"      
       - name: Upload failure log
         if: failure()
         uses: actions/upload-artifact@v3
