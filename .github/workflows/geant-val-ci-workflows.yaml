@@ -139,7 +139,7 @@ jobs:
           cd build && \
           executable=\$(find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./||'); \
           echo \${executable} &&
-          echo "executable=\${executable}" >> $GITHUB_ENV | \
+          echo "executable=${executable}" >> $GITHUB_ENV | \
           tee /workspace/logs/${{matrix.project_dir}}-stderr-run-${{ matrix.geant4_version }}.log"  
       - name: Upload failure log
         if: failure()
