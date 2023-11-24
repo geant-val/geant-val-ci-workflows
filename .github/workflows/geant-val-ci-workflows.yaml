@@ -152,7 +152,7 @@ jobs:
           name: ${{matrix.project_dir}}-logfiles-${{ matrix.geant4_version }}.log
           path: logs/*.log
       - name: Generate YAML file
-        if: always()
+        if: always() && inputs.commit_back
         run: |
           echo "  - name: \"${{ matrix.project_dir }}\"" >> results.yaml
           echo "    geant4_versions:" >> results.yaml
@@ -165,11 +165,11 @@ jobs:
           echo "              executable: \"${executable}\"" >> results.yaml
           cp results.yaml ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
       - name: Check content of YAML file
-        if: always()
+        if: always() && inputs.commit_back
         run: |
           cat results.yaml
       - name: Upload result file
-        if: always()
+        if: always() && inputs.commit_back
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
