@@ -170,7 +170,7 @@ jobs:
           cat results.yaml
       - name: Upload result file
         if: always() && inputs.commit_back
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml
           path: ${{matrix.project_dir}}-${{ matrix.geant4_version }}-results.yaml    
