@@ -147,7 +147,7 @@ jobs:
           echo "executable=${executable}" >> $GITHUB_ENV
       - name: Upload failure log
         if: failure()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{matrix.project_dir}}-logfiles-${{ matrix.geant4_version }}.log
           path: logs/*.log
