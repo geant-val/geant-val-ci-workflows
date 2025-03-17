@@ -189,7 +189,7 @@ jobs:
           
           # Run the executable
           echo "Running test: $EXECUTABLE"
-          ./"$EXECUTABLE" 2>&1 | tee /workspace/logs/${PROJECT_DIR}-stderr-run-${GEANT4_VERSION}.log
+          ./"$EXECUTABLE TestEm3.in" 2>&1 | tee /workspace/logs/${PROJECT_DIR}-stderr-run-${GEANT4_VERSION}.log
           EOF
 
           # Copy to container
