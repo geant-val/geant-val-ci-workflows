@@ -112,15 +112,39 @@ jobs:
             --workdir /workspace \
             ghcr.io/aidasoft/${{ matrix.platform }}:latest /bin/bash
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
+      - name: Create and copy setup script into container
+        run: |
+          cat << 'EOF' > setup_g4_env.sh
+          #!/bin/bash
+          set -e  # Stop on error
+          set -o pipefail
+          
+          # Load environment variables
+          export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH}
+          source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh
+          source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh
+
+          # Configure G4 application
+          mkdir -p build logs install
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX=../install ../${{ matrix.project_dir }}/ 2>&1 | tee /workspace/logs/${{ matrix.project_dir }}-stderr-configure-${{ matrix.geant4_version }}.log
+
+          # Ensure CMake succeeded
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+              echo "CMake configuration failed!"
+              exit 1
+          fi
+          EOF
+          
+          # Copy the script into the container and give it execution permission
+          docker cp setup_g4_env.sh "$CONTAINER_NAME:/workspace/setup_g4_env.sh"
+          docker exec "$CONTAINER_NAME" chmod +x /workspace/setup_g4_env.sh
+
       - name: Connect to container and configure G4 app
         id: configure-app
         run: |
-          docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
-          export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
-          source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
-          source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
-          mkdir -p build logs install && cd build && cmake -DCMAKE_INSTALL_PREFIX=../install ../${{matrix.project_dir}}/ 2>&1 | \
-          tee /workspace/logs/${{matrix.project_dir}}-stderr-configure-${{ matrix.geant4_version }}.log"
+          # Execute the script inside the container
+          docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/setup_g4_env.sh"
       - name: Connect to container and build G4 app
         id: build-app
         run: |
