@@ -40,6 +40,7 @@ jobs:
           MATRIX=()
 
           CONFIGURATIONS=(
+             '{"geant4_version":"11.3",     "platform":"alma9", "gcc_version":"13"}'
              '{"geant4_version":"11.1.p02", "platform":"centos7", "gcc_version":"10"}'
              '{"geant4_version":"10.7.p03", "platform":"centos7", "gcc_version":"10"}'
              '{"geant4_version":"11.1.ref10", "platform":"centos8", "gcc_version":"10"}')
