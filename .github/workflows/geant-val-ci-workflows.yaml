@@ -145,7 +145,7 @@ jobs:
 
           # Make scripts executable
           docker exec "$CONTAINER_NAME" chmod +x /workspace/setenv.sh
-          docker exec "$CONTAINER_NAME" chmod +x /workspace/configure.sh"
+          docker exec "$CONTAINER_NAME" chmod +x /workspace/configure.sh
 
       - name: Load environment inside the container
         run: |
