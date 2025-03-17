@@ -69,9 +69,11 @@ jobs:
           echo "Matrix JSON: $MATRIX_JSON"
 
           # Set the output for GitHub Actions
-          echo "matrix_json<<EOF" >> $GITHUB_OUTPUT
-          echo "$MATRIX_JSON" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "matrix_json<<EOF"
+            echo "$MATRIX_JSON"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
   build-and-test:
     needs: prepare-matrix
