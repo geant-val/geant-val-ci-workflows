@@ -47,7 +47,7 @@ jobs:
           add_to_matrix() {
             local project_dir="$1"
             for config in "${CONFIGURATIONS[@]}"; do
-            MATRIX+=("{\"project_dir\":\"$project_dir\", $config}")
+               MATRIX+=("{\"project_dir\":\"$project_dir\", ${config:1:-1}}")
             done
           }
 
