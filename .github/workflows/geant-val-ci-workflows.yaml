@@ -196,7 +196,7 @@ jobs:
           docker cp setenv.sh "$CONTAINER_NAME:/workspace/setenv.sh"
           docker cp configure.sh "$CONTAINER_NAME:/workspace/configure.sh"
           docker cp build.sh "$CONTAINER_NAME:/workspace/build.sh"
-          docker cp build.sh "$CONTAINER_NAME:/workspace/run_tests.sh"
+          docker cp run_tests.sh "$CONTAINER_NAME:/workspace/run_tests.sh"
 
           # Make scripts executable
           docker exec "$CONTAINER_NAME" chmod +x /workspace/setenv.sh
@@ -217,6 +217,7 @@ jobs:
         id: build-app
         run: |
           docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/build.sh"
+          
       - name: Run quick app tests 1
         run: |
           docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/run_tests.sh"
