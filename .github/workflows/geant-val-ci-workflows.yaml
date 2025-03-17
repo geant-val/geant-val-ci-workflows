@@ -161,18 +161,45 @@ jobs:
           echo "Build completed successfully!"
           EOF
 
+          cat << 'EOF' > run_tests.sh
+          #!/bin/bash
+          set -e  # Stop on error
+          set -o pipefail  # Ensure failures propagate correctly
+          
+          # Load the environment
+          source /workspace/setenv.sh
+          
+          # Navigate to the build directory
+          cd /workspace/build || { echo "Build directory not found!"; exit 1; }
+          
+          # Find executable in build directory
+          EXECUTABLE=$(find . -maxdepth 1 -type f -executable -exec file -i '{}' \; | grep 'x-executable; charset=binary' | cut -d ':' -f 1 | sed 's|^\./||')
+          
+          # If no executable is found, fail
+          if [[ -z "$EXECUTABLE" ]]; then
+              echo "No executable found in build directory!"
+              exit 1
+          fi
+          
+          # Store the executable name for later use
+          echo "EXECUTABLE=$EXECUTABLE" >> /workspace/env_vars.sh
+          
+          # Run the executable
+          echo "Running test: $EXECUTABLE"
+          ./"$EXECUTABLE" 2>&1 | tee /workspace/logs/${PROJECT_DIR}-stderr-run-${GEANT4_VERSION}.log
+          EOF
 
           # Copy to container
           docker cp setenv.sh "$CONTAINER_NAME:/workspace/setenv.sh"
           docker cp configure.sh "$CONTAINER_NAME:/workspace/configure.sh"
           docker cp build.sh "$CONTAINER_NAME:/workspace/build.sh"
-
+          docker cp build.sh "$CONTAINER_NAME:/workspace/run_tests.sh"
 
           # Make scripts executable
           docker exec "$CONTAINER_NAME" chmod +x /workspace/setenv.sh
           docker exec "$CONTAINER_NAME" chmod +x /workspace/configure.sh
           docker exec "$CONTAINER_NAME" chmod +x /workspace/build.sh
-
+          docker exec "$CONTAINER_NAME" chmod +x /workspace/run_tests.sh
 
       - name: Load environment inside the container
         run: |
