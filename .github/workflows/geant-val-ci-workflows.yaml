@@ -214,6 +214,11 @@ jobs:
         id: build-app
         run: |
           docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/build.sh"
+      - name: Run quick app tests 1
+        run: |
+          docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/run_tests.sh"
+
+
       - name: Run quick app tests.
         run: |
           docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
