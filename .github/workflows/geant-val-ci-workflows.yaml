@@ -139,13 +139,40 @@ jobs:
           echo "CMake configuration complete!"
           EOF
 
+          cat << 'EOF' > build.sh
+          #!/bin/bash
+          set -e  # Stop on first error
+          set -o pipefail  # Ensure failures propagate correctly
+          
+          # Load environment variables
+          source /workspace/setenv.sh
+          
+          # Navigate to the build directory
+          cd /workspace/build || { echo "Build directory not found!"; exit 1; }
+          
+          # Run the build process
+          make install 2>&1 | tee /workspace/logs/${PROJECT_DIR}-stderr-build-${GEANT4_VERSION}.log
+          
+          # Ensure `make install` succeeded
+          if [ "${PIPESTATUS[0]}" -ne 0 ]; then
+              echo "Build failed!"
+              exit 1
+          fi
+          echo "Build completed successfully!"
+          EOF
+
+
           # Copy to container
           docker cp setenv.sh "$CONTAINER_NAME:/workspace/setenv.sh"
           docker cp configure.sh "$CONTAINER_NAME:/workspace/configure.sh"
+          docker cp build.sh "$CONTAINER_NAME:/workspace/build.sh"
+
 
           # Make scripts executable
           docker exec "$CONTAINER_NAME" chmod +x /workspace/setenv.sh
           docker exec "$CONTAINER_NAME" chmod +x /workspace/configure.sh
+          docker exec "$CONTAINER_NAME" chmod +x /workspace/build.sh
+
 
       - name: Load environment inside the container
         run: |
@@ -156,15 +183,10 @@ jobs:
         run: |
           docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/configure.sh"
 
-      - name: Connect to container and build G4 app
+      - name: Build Geant4 Application
         id: build-app
         run: |
-          docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
-          export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH} && \
-          source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh && \
-          source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh && \
-          cd build && make install 2>&1 | \
-          tee /workspace/logs/${{matrix.project_dir}}-stderr-build-${{ matrix.geant4_version }}.log"   
+          docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/build.sh"
       - name: Run quick app tests.
         run: |
           docker exec $CONTAINER_NAME /bin/bash -c "set -o pipefail; \
