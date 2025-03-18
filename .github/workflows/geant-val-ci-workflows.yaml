@@ -40,10 +40,10 @@ jobs:
           MATRIX=()
 
           CONFIGURATIONS=(
-             '{"geant4_version":"11.3",     "platform":"alma9", "gcc_version":"13"}'
-             '{"geant4_version":"11.1.p02", "platform":"centos7", "gcc_version":"10"}'
-             '{"geant4_version":"10.7.p03", "platform":"centos7", "gcc_version":"10"}'
-             '{"geant4_version":"11.1.ref10", "platform":"centos8", "gcc_version":"10"}')
+             '{"geant4_version":"11.3",     "platform":"el9", "gcc_version":"13", "docker_name":"alma9"}'
+             '{"geant4_version":"11.1.p02", "platform":"centos7", "gcc_version":"10", "docker_name":"centos7"}'
+             '{"geant4_version":"10.7.p03", "platform":"centos7", "gcc_version":"10", "docker_name":"centos7"}'
+             '{"geant4_version":"11.1.ref10", "platform":"centos8", "gcc_version":"10", "docker_name":"centos8"}')
 
           add_to_matrix() {
             local project_dir="$1"
@@ -100,7 +100,7 @@ jobs:
             --volume "${{ github.workspace }}:/workspace" \
             --volume /cvmfs:/cvmfs:shared \
             --workdir /workspace \
-            ghcr.io/aidasoft/${{ matrix.platform }}:latest /bin/bash
+            ghcr.io/aidasoft/${{ matrix.docker_name }}:latest /bin/bash
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
       - name: Create setup scripts and copy them inside the container
         run: |
