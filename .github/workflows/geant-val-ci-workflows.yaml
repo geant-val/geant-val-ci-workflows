@@ -111,6 +111,8 @@ jobs:
           export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:${PATH}
           source /cvmfs/geant4.cern.ch/geant4/${{ matrix.geant4_version }}/x86_64-${{ matrix.platform }}-gcc${{ matrix.gcc_version }}-optdeb/bin/geant4.sh
           source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ matrix.gcc_version }}/x86_64-${{ matrix.platform }}/setup.sh
+          source $(ldd /cvmfs/geant4.cern.ch/geant4/11.3/x86_64-el9-gcc13-optdeb/lib64/*.so | grep views/LCG_ | head -1 | awk -F ' => ' '{print $2}' | awk -F '/lib/' '{print $1}')/setup.sh
+
           echo "Environment setup complete!"
           EOF
 
