@@ -100,7 +100,7 @@ jobs:
             --volume "${{ github.workspace }}:/workspace" \
             --volume /cvmfs:/cvmfs:shared \
             --workdir /workspace \
-            ghcr.io/aidasoft/${{ matrix.docker_name }}:latest /bin/bash
+            gitlab-registry.cern.ch/sft/docker/${{ matrix.docker_name }}:latest /bin/bash
           echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
       - name: Create setup scripts and copy them inside the container
         run: |
