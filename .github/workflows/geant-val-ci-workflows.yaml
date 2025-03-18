@@ -89,7 +89,7 @@ jobs:
         with:
           repository: ${{ inputs.repository || github.repository }}
           submodules: 'recursive'
-#      - uses: cvmfs-contrib/github-action-cvmfs@v3
+      - uses: cvmfs-contrib/github-action-cvmfs@v3
       - name: Use Matrix JSON
         run: |
           echo "${{needs.prepare-matrix.outputs.matrix_json}}"
