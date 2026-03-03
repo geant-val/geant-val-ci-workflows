@@ -26,7 +26,7 @@ on:
         default: ""
       build_target:
         type: string
-        default: "install"
+        default: ""
       test_command:
         type: string
         default: "ctest --output-on-failure"
@@ -55,6 +55,7 @@ jobs:
             set -euo pipefail
             export MANPATH="${MANPATH:-}"
             export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:$PATH
+
             # CVMFS setup scripts are not nounset-safe
             set +u
             source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ inputs.gcc_version }}/x86_64-${{ inputs.platform }}/setup.sh
@@ -62,6 +63,7 @@ jobs:
             source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/bin/geant4.sh
             source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/CMake-setup.sh
             set -u
+
             GEANT4_CMAKE_CONFIG="$(find /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb -name Geant4Config.cmake | head -1)"
             if [[ -z "${GEANT4_CMAKE_CONFIG}" ]]; then
               echo "Geant4Config.cmake not found for selected Geant4 setup"
@@ -78,6 +80,16 @@ jobs:
               -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}" \
               ${{ inputs.configure_args }} \
               /workspace/${{ inputs.project_dir }}
-            cmake --build . --target ${{ inputs.build_target }} -j"$(nproc)"
+
+            if [[ -n "${{ inputs.build_target }}" ]]; then
+              cmake --build . --target "${{ inputs.build_target }}" -j"$(nproc)"
+            else
+              cmake --build . -j"$(nproc)"
+            fi
+
             ${{ inputs.test_command }}
           '
+
+      - name: Cleanup container
+        if: always()
+        run: docker rm -f g4-ci || true
