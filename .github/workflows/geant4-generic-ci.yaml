@@ -15,6 +15,9 @@ on:
       docker_name:
         type: string
         default: "el9"
+      lcg_view:
+        type: string
+        default: "LCG_108_geant4ext20250725"
       project_dir:
         type: string
         default: "."
@@ -51,13 +54,27 @@ jobs:
           docker exec g4-ci /bin/bash -lc '
             set -euo pipefail
             export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:$PATH
-            source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/bin/geant4.sh
-            export MANPATH="${MANPATH:-}"
             source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ inputs.gcc_version }}/x86_64-${{ inputs.platform }}/setup.sh
+            source /cvmfs/sft.cern.ch/lcg/views/${{ inputs.lcg_view }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-opt/setup.sh
+            source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/bin/geant4.sh
+            source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/CMake-setup.sh
+
+            GEANT4_CMAKE_CONFIG="$(find /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb -name Geant4Config.cmake | head -1)"
+            if [[ -z "${GEANT4_CMAKE_CONFIG}" ]]; then
+              echo "Geant4Config.cmake not found for selected Geant4 setup"
+              exit 1
+            fi
+            export Geant4_DIR="$(dirname "${GEANT4_CMAKE_CONFIG}")"
+            export CMAKE_PREFIX_PATH="${Geant4_DIR}:${CMAKE_PREFIX_PATH:-}"
 
             mkdir -p /workspace/build
             cd /workspace/build
-            cmake -DCMAKE_INSTALL_PREFIX=/workspace/install ${{ inputs.configure_args }} /workspace/${{ inputs.project_dir }}
+            cmake \
+              -DCMAKE_INSTALL_PREFIX=/workspace/install \
+              -DGeant4_DIR="${Geant4_DIR}" \
+              -DCMAKE_PREFIX_PATH="${CMAKE_PREFIX_PATH}" \
+              ${{ inputs.configure_args }} \
+              /workspace/${{ inputs.project_dir }}
             cmake --build . --target ${{ inputs.build_target }} -j"$(nproc)"
             ${{ inputs.test_command }}
           '
