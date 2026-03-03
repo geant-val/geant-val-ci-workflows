@@ -1,0 +1,62 @@
+name: geant4-generic-ci
+
+on:
+  workflow_call:
+    inputs:
+      geant4_version:
+        type: string
+        default: "11.4"
+      platform:
+        type: string
+        default: "el9"
+      gcc_version:
+        type: string
+        default: "13"
+      docker_name:
+        type: string
+        default: "el9"
+      project_dir:
+        type: string
+        default: "."
+      configure_args:
+        type: string
+        default: ""
+      build_target:
+        type: string
+        default: "install"
+      test_command:
+        type: string
+        default: "ctest --output-on-failure"
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: cvmfs-contrib/github-action-cvmfs@v3
+
+      - name: Start container
+        run: |
+          docker run -id --name g4-ci \
+            -v "${{ github.workspace }}:/workspace" \
+            -v /cvmfs:/cvmfs:shared \
+            -w /workspace \
+            ghcr.io/aidasoft/${{ inputs.docker_name }}:latest /bin/bash
+
+      - name: Build and test
+        run: |
+          docker exec g4-ci /bin/bash -lc '
+            set -euo pipefail
+            export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:$PATH
+            source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/bin/geant4.sh
+            source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ inputs.gcc_version }}/x86_64-${{ inputs.platform }}/setup.sh
+
+            mkdir -p /workspace/build
+            cd /workspace/build
+            cmake -DCMAKE_INSTALL_PREFIX=/workspace/install ${{ inputs.configure_args }} /workspace/${{ inputs.project_dir }}
+            cmake --build . --target ${{ inputs.build_target }} -j"$(nproc)"
+            ${{ inputs.test_command }}
+          '
