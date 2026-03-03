@@ -208,12 +208,12 @@ jobs:
       - name: Build Geant4 Application
         id: build-app
         run: |
-          docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/build.sh"
+          docker exec "$CONTAINER_NAME" /bin/bash -c "PROJECT_DIR='${{ matrix.project_dir }}' GEANT4_VERSION='${{ matrix.geant4_version }}' /workspace/build.sh"
           
       - name: Run quick app tests 1
         id: run-app
         run: |
-          docker exec "$CONTAINER_NAME" /bin/bash -c "/workspace/run_tests.sh"
+          docker exec "$CONTAINER_NAME" /bin/bash -c "PROJECT_DIR='${{ matrix.project_dir }}' GEANT4_VERSION='${{ matrix.geant4_version }}' /workspace/run_tests.sh"
 
       - name: Upload failure log
         if: failure()
