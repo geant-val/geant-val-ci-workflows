@@ -52,6 +52,7 @@ jobs:
             set -euo pipefail
             export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:$PATH
             source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/bin/geant4.sh
+            export MANPATH="${MANPATH:-}"
             source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ inputs.gcc_version }}/x86_64-${{ inputs.platform }}/setup.sh
 
             mkdir -p /workspace/build
