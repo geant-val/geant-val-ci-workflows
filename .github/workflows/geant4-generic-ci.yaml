@@ -55,11 +55,13 @@ jobs:
             set -euo pipefail
             export MANPATH="${MANPATH:-}"
             export PATH=/cvmfs/sft.cern.ch/lcg/contrib/CMake/3.26.2/Linux-x86_64/bin/:$PATH
+            # CVMFS setup scripts are not nounset-safe
+            set +u
             source /cvmfs/sft.cern.ch/lcg/contrib/gcc/${{ inputs.gcc_version }}/x86_64-${{ inputs.platform }}/setup.sh
             source /cvmfs/sft.cern.ch/lcg/views/${{ inputs.lcg_view }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-opt/setup.sh
             source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/bin/geant4.sh
             source /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb/CMake-setup.sh
-
+            set -u
             GEANT4_CMAKE_CONFIG="$(find /cvmfs/geant4.cern.ch/geant4/${{ inputs.geant4_version }}/x86_64-${{ inputs.platform }}-gcc${{ inputs.gcc_version }}-optdeb -name Geant4Config.cmake | head -1)"
             if [[ -z "${GEANT4_CMAKE_CONFIG}" ]]; then
               echo "Geant4Config.cmake not found for selected Geant4 setup"
